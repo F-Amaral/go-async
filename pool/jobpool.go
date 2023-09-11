@@ -30,7 +30,7 @@ func (s *jobPool[I, O]) Process(inputs []I) domain.ProcessResult {
 		wg.Add(1)
 		go func(jobs <-chan I, results chan<- domain.JobResult) {
 			defer wg.Done()
-			for _, input := range inputs {
+			for input := range jobs {
 				output, err := s.jobFn(input)
 				results <- domain.JobResult{
 					Input:  input,
