@@ -2,8 +2,9 @@ package pool_test
 
 import (
 	"fmt"
-	"github.com/f-amaral/go-async/pool"
 	"sync"
+
+	"github.com/f-amaral/go-async/pool"
 )
 
 // ExampleJobPool_ProcessOneDataSet demonstrates how to use the JobPool to process one dataset.

@@ -20,12 +20,9 @@ Creates a pool with a fixed number of workers that will execute the tasks sent t
 package main
 
 import (
-	"cmd/asm/internal/lex"
+	"encoding/json"
 	"fmt"
 	"github.com/f-amaral/go-async/pool"
-	"time"
-
-	"github.com/f-amaral/go-async/workerpool"
 )
 
 func main() {
@@ -38,7 +35,9 @@ func main() {
 	p := pool.NewPool(10, exFunc)
 	defer p.Close()
 
-	fmt.Println(p.Process(inputSet))
+	result := p.Process(inputSet)
+	resultBytes, _ := json.Marshal(result)
+	fmt.Println(string(resultBytes))
 }
 ```
 

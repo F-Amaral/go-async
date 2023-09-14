@@ -1,9 +1,10 @@
 package pool_test
 
 import (
+	"testing"
+
 	"github.com/f-amaral/go-async/pool"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestJobPool_Process(t *testing.T) {
@@ -60,5 +61,4 @@ func TestJobPool_Close(t *testing.T) {
 			sut.Process([]int{1, 2, 3})
 		})
 	})
-
 }
