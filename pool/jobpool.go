@@ -2,52 +2,53 @@ package pool
 
 import (
 	"github.com/f-amaral/go-async/domain"
-	"sync"
 )
 
 type JobFn[I any, O any] func(I) (O, error)
 
-type jobPool[I any, O any] struct {
-	workers int
-	jobFn   JobFn[I, O]
+type jobParams[I any] struct {
+	input     I
+	resultsCh chan domain.JobResult
 }
 
-func NewPool[I any, O any](workers int, job JobFn[I, O]) domain.Processor[I, O] {
+type jobPool[I any, O any] struct {
+	jobCh chan<- jobParams[I]
+}
+
+func NewPool[I any, O any](workers int, jobFunc JobFn[I, O]) domain.Processor[I, O] {
+	jobs := make(chan jobParams[I], workers)
+
+	for w := 0; w < workers; w++ {
+		go func() {
+			for params := range jobs {
+				output, err := jobFunc(params.input)
+				params.resultsCh <- domain.JobResult{
+					Input:  params.input,
+					Output: output,
+					Err:    err,
+				}
+			}
+		}()
+	}
+
 	return &jobPool[I, O]{
-		workers: workers,
-		jobFn:   job,
+		jobCh: jobs,
 	}
 }
 
 func (s *jobPool[I, O]) Process(inputs []I) domain.ProcessResult {
 	inputSize := len(inputs)
 
-	var wg sync.WaitGroup
-	jobs := make(chan I, inputSize)
 	results := make(chan domain.JobResult, inputSize)
 
-	for w := 0; w < min(inputSize, s.workers); w++ {
-		wg.Add(1)
-		go func(jobs <-chan I, results chan<- domain.JobResult) {
-			defer wg.Done()
-			for input := range jobs {
-				output, err := s.jobFn(input)
-				results <- domain.JobResult{
-					Input:  input,
-					Output: output,
-					Err:    err,
-				}
-			}
-		}(jobs, results)
-	}
-
 	for _, input := range inputs {
-		jobs <- input
+		s.jobCh <- jobParams[I]{
+			input:     input,
+			resultsCh: results,
+		}
 	}
-	close(jobs)
 
 	defer func() {
-		wg.Wait()
 		close(results)
 	}()
 
@@ -65,4 +66,8 @@ func (s *jobPool[I, O]) Process(inputs []I) domain.ProcessResult {
 	}
 
 	return output
+}
+
+func (s *jobPool[I, O]) Close() {
+	close(s.jobCh)
 }

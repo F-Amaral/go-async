@@ -44,3 +44,21 @@ func TestJobPool_Process(t *testing.T) {
 		assert.True(t, res.HasError)
 	})
 }
+
+func TestJobPool_Close(t *testing.T) {
+	t.Run("Should close the job channel", func(t *testing.T) {
+		// arrange
+		sut := pool.NewPool[int, int](10, func(i int) (int, error) {
+			return i, nil
+		})
+
+		// act
+		sut.Close()
+
+		// assert
+		assert.Panics(t, func() {
+			sut.Process([]int{1, 2, 3})
+		})
+	})
+
+}

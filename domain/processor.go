@@ -13,4 +13,5 @@ type ProcessResult struct {
 
 type Processor[I any, O any] interface {
 	Process([]I) ProcessResult
+	Close()
 }
