@@ -1,4 +1,4 @@
-package domain
+package async
 
 // Processor is a generic interface to process asynchronously a list of inputs.
 type Processor[I any, O any] interface {

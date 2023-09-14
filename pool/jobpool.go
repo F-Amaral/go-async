@@ -1,28 +1,28 @@
 package pool
 
 import (
-	"github.com/f-amaral/go-async/domain"
+	"github.com/f-amaral/go-async/async"
 )
 
 type JobFn[I any, O any] func(I) (O, error)
 
 type jobParams[I any] struct {
 	input     I
-	resultsCh chan domain.JobResult
+	resultsCh chan async.JobResult
 }
 
 type jobPool[I any, O any] struct {
 	jobCh chan<- jobParams[I]
 }
 
-func NewPool[I any, O any](workers int, jobFunc JobFn[I, O]) domain.Processor[I, O] {
+func NewPool[I any, O any](workers int, jobFunc JobFn[I, O]) async.Processor[I, O] {
 	jobs := make(chan jobParams[I], workers)
 
 	for w := 0; w < workers; w++ {
 		go func() {
 			for params := range jobs {
 				output, err := jobFunc(params.input)
-				params.resultsCh <- domain.JobResult{
+				params.resultsCh <- async.JobResult{
 					Input:  params.input,
 					Output: output,
 					Err:    err,
@@ -36,10 +36,10 @@ func NewPool[I any, O any](workers int, jobFunc JobFn[I, O]) domain.Processor[I,
 	}
 }
 
-func (s *jobPool[I, O]) Process(inputs []I) domain.ProcessResult {
+func (s *jobPool[I, O]) Process(inputs []I) async.ProcessResult {
 	inputSize := len(inputs)
 
-	results := make(chan domain.JobResult, inputSize)
+	results := make(chan async.JobResult, inputSize)
 
 	for _, input := range inputs {
 		s.jobCh <- jobParams[I]{
@@ -52,8 +52,8 @@ func (s *jobPool[I, O]) Process(inputs []I) domain.ProcessResult {
 		close(results)
 	}()
 
-	output := domain.ProcessResult{
-		Results:  make([]domain.JobResult, 0),
+	output := async.ProcessResult{
+		Results:  make([]async.JobResult, 0),
 		HasError: false,
 	}
 
