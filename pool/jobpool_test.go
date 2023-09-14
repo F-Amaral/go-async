@@ -7,7 +7,7 @@ import (
 )
 
 func TestJobPool_Process(t *testing.T) {
-	t.Run("should process all inputs", func(t *testing.T) {
+	t.Run("Should process all inputs without error", func(t *testing.T) {
 		// arrange
 		dataSet := make([]int, 100)
 		for i := 0; i < 100; i++ {
