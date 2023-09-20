@@ -1,8 +1,9 @@
 package pool_test
 
 import (
-	"github.com/f-amaral/go-async/async"
 	"testing"
+
+	"github.com/f-amaral/go-async/async"
 
 	"github.com/f-amaral/go-async/pool"
 	"github.com/stretchr/testify/assert"
@@ -86,7 +87,6 @@ func BenchmarkJobPool_Process_WithoutErr(b *testing.B) {
 	defer p.Close()
 	for i := 0; i < b.N; i++ {
 		processResult = p.Process(data)
-
 	}
 	result = processResult
 }

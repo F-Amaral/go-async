@@ -2,9 +2,10 @@ package async_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/f-amaral/go-async/async"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestJobResult_GetError_WhenError(t *testing.T) {
@@ -27,7 +28,6 @@ func TestJobResult_GetError_WhenNoError(t *testing.T) {
 	ok, err := jobResult.GetError()
 	assert.False(t, ok)
 	assert.Nil(t, err)
-
 }
 
 func TestProcessResult_GetErrors_WhenJobsHaveErrors(t *testing.T) {
@@ -51,8 +51,10 @@ func TestProcessResult_GetErrors_WhenJobsDontHaveErrors(t *testing.T) {
 }
 
 // region Benchmarks
-var errs []error
-var err error
+var (
+	errs []error
+	err  error
+)
 
 func BenchmarkJobResult_GetError_WhenError(b *testing.B) {
 	var jobResult async.JobResult
