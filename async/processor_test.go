@@ -57,8 +57,7 @@ var (
 )
 
 func BenchmarkJobResult_GetError_WhenError(b *testing.B) {
-	var jobResult async.JobResult
-	jobResult = buildJobResultWithErr()
+	jobResult := buildJobResultWithErr()
 	var result error
 	for i := 0; i < b.N; i++ {
 		_, result = jobResult.GetError()
@@ -67,8 +66,7 @@ func BenchmarkJobResult_GetError_WhenError(b *testing.B) {
 }
 
 func BenchmarkJobResult_GetError_WhenNoError(b *testing.B) {
-	var jobResult async.JobResult
-	jobResult = buildJobResultWithoutErr()
+	jobResult := buildJobResultWithoutErr()
 	var result error
 	for i := 0; i < b.N; i++ {
 		_, result = jobResult.GetError()
