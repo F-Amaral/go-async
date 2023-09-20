@@ -1,6 +1,7 @@
 package pool_test
 
 import (
+	"github.com/f-amaral/go-async/async"
 	"testing"
 
 	"github.com/f-amaral/go-async/pool"
@@ -62,3 +63,43 @@ func TestJobPool_Close(t *testing.T) {
 		})
 	})
 }
+
+// region Benchmarks
+var result async.ProcessResult
+
+func buildData() []int {
+	return []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+}
+
+func processWithoutErr(i int) (int, error) {
+	return i * 2, nil
+}
+
+func processWithErr(i int) (int, error) {
+	return i, assert.AnError
+}
+
+func BenchmarkJobPool_Process_WithoutErr(b *testing.B) {
+	var processResult async.ProcessResult
+	p := pool.NewPool(10, processWithoutErr)
+	data := buildData()
+	defer p.Close()
+	for i := 0; i < b.N; i++ {
+		processResult = p.Process(data)
+
+	}
+	result = processResult
+}
+
+func BenchmarkJobPool_Process_WithErr(b *testing.B) {
+	var processResult async.ProcessResult
+	p := pool.NewPool(10, processWithErr)
+	data := buildData()
+	defer p.Close()
+	for i := 0; i < b.N; i++ {
+		processResult = p.Process(data)
+	}
+	result = processResult
+}
+
+// endregion
