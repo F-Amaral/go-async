@@ -31,7 +31,6 @@ func TestProcessResult_GetErrors_WhenJobsDontHaveErrors(t *testing.T) {
 // region Benchmarks
 var (
 	errs []error
-	err  error
 )
 
 func BenchmarkProcessResult_GetErrors(b *testing.B) {
@@ -80,22 +79,6 @@ func buildJobResultsWithoutErrs() []async.JobResult {
 		})
 	}
 	return jobResults
-}
-
-func buildJobResultWithoutErr() async.JobResult {
-	return async.JobResult{
-		Input:  1,
-		Output: 2,
-		Err:    nil,
-	}
-}
-
-func buildJobResultWithErr() async.JobResult {
-	return async.JobResult{
-		Input:  1,
-		Output: 2,
-		Err:    assert.AnError,
-	}
 }
 
 // endregion
