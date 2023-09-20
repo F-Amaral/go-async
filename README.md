@@ -38,6 +38,9 @@ func main() {
 	result := p.Process(inputSet)
 	resultBytes, _ := json.Marshal(result)
 	fmt.Println(string(resultBytes))
+	// Error Handling:
+	fmt.Println(result.GetErrors()) 
+	
 }
 ```
 

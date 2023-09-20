@@ -8,6 +8,8 @@ import (
 )
 
 // ExampleJobPool_ProcessOneDataSet demonstrates how to use the JobPool to process one dataset.
+//
+//nolint:all
 func ExampleJobPool_Process_OneDataSet() {
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
@@ -25,6 +27,8 @@ func ExampleJobPool_Process_OneDataSet() {
 }
 
 // ExampleJobPool_Process demonstrates how to use the JobPool to more than one dataset with the same shared workers.
+//
+//nolint:all
 func ExampleJobPool_Process_MultipleInputsInSameWorkerPool() {
 	odds := []int{1, 3, 5, 7, 9}
 	evens := []int{2, 4, 6, 8, 10}
