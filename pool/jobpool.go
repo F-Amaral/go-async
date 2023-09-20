@@ -37,10 +37,7 @@ func NewPool[I any, O any](workers int, jobFunc JobFn[I, O]) async.Processor[I, 
 }
 
 func (s *jobPool[I, O]) Process(inputs []I) async.ProcessResult {
-	inputSize := len(inputs)
-
-	results := make(chan async.JobResult, inputSize)
-
+	results := make(chan async.JobResult, len(inputs))
 	for _, input := range inputs {
 		s.jobCh <- jobParams[I]{
 			input:     input,

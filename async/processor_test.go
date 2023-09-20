@@ -8,28 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestJobResult_GetError_WhenError(t *testing.T) {
-	jobResult := async.JobResult{
-		Input:  1,
-		Output: 2,
-		Err:    assert.AnError,
-	}
-	ok, err := jobResult.GetError()
-	assert.True(t, ok)
-	assert.Equal(t, assert.AnError, err)
-}
-
-func TestJobResult_GetError_WhenNoError(t *testing.T) {
-	jobResult := async.JobResult{
-		Input:  1,
-		Output: 2,
-		Err:    nil,
-	}
-	ok, err := jobResult.GetError()
-	assert.False(t, ok)
-	assert.Nil(t, err)
-}
-
 func TestProcessResult_GetErrors_WhenJobsHaveErrors(t *testing.T) {
 	jobResults := buildJobResultsWithErrs()
 	processResult := async.ProcessResult{
@@ -55,24 +33,6 @@ var (
 	errs []error
 	err  error
 )
-
-func BenchmarkJobResult_GetError_WhenError(b *testing.B) {
-	jobResult := buildJobResultWithErr()
-	var result error
-	for i := 0; i < b.N; i++ {
-		_, result = jobResult.GetError()
-	}
-	err = result
-}
-
-func BenchmarkJobResult_GetError_WhenNoError(b *testing.B) {
-	jobResult := buildJobResultWithoutErr()
-	var result error
-	for i := 0; i < b.N; i++ {
-		_, result = jobResult.GetError()
-	}
-	err = result
-}
 
 func BenchmarkProcessResult_GetErrors(b *testing.B) {
 	var processResult async.ProcessResult
