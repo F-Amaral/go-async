@@ -52,6 +52,27 @@ func TestProcessResult_GetErrors_WhenJobsDontHaveErrors(t *testing.T) {
 
 // region Benchmarks
 var errs []error
+var err error
+
+func BenchmarkJobResult_GetError_WhenError(b *testing.B) {
+	var jobResult async.JobResult
+	jobResult = buildJobResultWithErr()
+	var result error
+	for i := 0; i < b.N; i++ {
+		_, result = jobResult.GetError()
+	}
+	err = result
+}
+
+func BenchmarkJobResult_GetError_WhenNoError(b *testing.B) {
+	var jobResult async.JobResult
+	jobResult = buildJobResultWithoutErr()
+	var result error
+	for i := 0; i < b.N; i++ {
+		_, result = jobResult.GetError()
+	}
+	err = result
+}
 
 func BenchmarkProcessResult_GetErrors(b *testing.B) {
 	var processResult async.ProcessResult
@@ -99,6 +120,22 @@ func buildJobResultsWithoutErrs() []async.JobResult {
 		})
 	}
 	return jobResults
+}
+
+func buildJobResultWithoutErr() async.JobResult {
+	return async.JobResult{
+		Input:  1,
+		Output: 2,
+		Err:    nil,
+	}
+}
+
+func buildJobResultWithErr() async.JobResult {
+	return async.JobResult{
+		Input:  1,
+		Output: 2,
+		Err:    assert.AnError,
+	}
 }
 
 // endregion
