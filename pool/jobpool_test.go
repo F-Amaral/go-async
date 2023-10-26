@@ -1,6 +1,7 @@
 package pool_test
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/f-amaral/go-async/async"
@@ -45,6 +46,27 @@ func TestJobPool_Process(t *testing.T) {
 		// assert
 		assert.Equal(t, len(dataSet), len(res.Results))
 		assert.True(t, res.HasError)
+	})
+	t.Run("Should return sorted output when created with sorting output", func(t *testing.T) {
+		// arrange
+		dataSet := make([]int, 100)
+		for i := 0; i < 100; i++ {
+			dataSet[i] = i
+		}
+
+		sut := pool.NewPool[int, int](10, func(i int) (int, error) {
+			return i, assert.AnError
+		}, pool.WithSortingOutput[int, int]())
+
+		// act
+		res := sut.Process(dataSet)
+
+		// assert
+		assert.Equal(t, len(dataSet), len(res.Results))
+		assert.True(t, res.HasError)
+		assert.True(t, sort.SliceIsSorted(res.Results, func(i, j int) bool {
+			return res.Results[i].ExecIndex < res.Results[j].ExecIndex
+		}))
 	})
 }
 
