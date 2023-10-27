@@ -1,5 +1,7 @@
 package async
 
+import "github.com/f-amaral/go-async/sort"
+
 // Processor is a generic interface to process asynchronously a list of inputs.
 type Processor[I any, O any] interface {
 	Process([]I) ProcessResult
@@ -8,9 +10,14 @@ type Processor[I any, O any] interface {
 
 // JobResult is the result of a single job.
 type JobResult struct {
-	Input  any
-	Output any
-	Err    error
+	Input     any
+	Output    any
+	Err       error
+	ExecIndex int
+}
+
+func (j JobResult) GetIndex() int {
+	return j.ExecIndex
 }
 
 // ProcessResult is the result of a list of jobs, the hasError flag indicates if any job has failed.
@@ -29,4 +36,8 @@ func (p *ProcessResult) GetErrors() (errs []error) {
 		}
 	}
 	return errs
+}
+
+func (p *ProcessResult) Sort() {
+	p.Results = sort.Merge(p.Results)
 }
